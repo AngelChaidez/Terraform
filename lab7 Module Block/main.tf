@@ -2,17 +2,10 @@
 provider "aws" {
   region = "us-east-1"
 }
+
 #Retrieve the list of AZs in the current AWS region
 data "aws_availability_zones" "available" {}
 data "aws_region" "current" {}
-
-locals {
-  team = "api_mgmt_dev"
-  application = "corp_api"
-  server_name = "ec2-${var.environment}-api-${var.variables_sub_az}"
-}
-
-
 
 # Terraform Data Block - Lookup Ubuntu 20.04
 data "aws_ami" "ubuntu" {
@@ -39,7 +32,6 @@ resource "aws_vpc" "vpc" {
     Name        = var.vpc_name
     Environment = "demo_environment"
     Terraform   = "true"
-    Region = data.aws_region.current.name
   }
 }
 
@@ -140,32 +132,23 @@ resource "aws_nat_gateway" "nat_gateway" {
     Name = "demo_nat_gateway"
   }
 }
-# Terraform Data Block - Lookup Ubuntu 16.04
-data "aws_ami" "ubuntu_16_04" {
-most_recent = true
-filter {
-name = "name"
-values = ["ubuntu/images/hvm-ssd/ubuntu-xenial-16.04-amd64-server-*"]
-}
-owners = ["099720109477"]
-}
+
 # Terraform Resource Block - To Build EC2 instance in Public Subnet
 resource "aws_instance" "web_server" {                            # BLOCK
-  ami           = data.aws_ami.ubuntu_16_04.id                          # Argument with data expression
+  ami           = data.aws_ami.ubuntu.id                          # Argument with data expression
   instance_type = "t2.micro"                                      # Argument
   subnet_id     = aws_subnet.public_subnets["public_subnet_1"].id # Argument with value as expression
-  
   tags = {
-    Name = local.server_name
-    Owner = local.team
-    App = local.application
+    Name = "Web EC2 Server"
   }
 }
+
 resource "aws_subnet" "variables-subnet" {
   vpc_id                  = aws_vpc.vpc.id
   cidr_block              = var.variables_sub_cidr
   availability_zone       = var.variables_sub_az
   map_public_ip_on_launch = var.variables_sub_auto_ip
+
   tags = {
     Name      = "sub-variables-${var.variables_sub_az}"
     Terraform = "true"
