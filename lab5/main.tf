@@ -142,7 +142,7 @@ resource "aws_instance" "web_server" {                            # BLOCK
     Name = "Web EC2 Server"
   }
 }
-/*
+
 resource "aws_s3_bucket" "my-new-S3-bucket" {
   bucket = "my-new-s3-bucket-achaidez-${random_id.randomness.hex}"
 
@@ -162,6 +162,7 @@ resource "aws_s3_bucket_ownership_controls" "s3_bucket_acl_ownership" {
     object_ownership = "ObjectWriter"
   }
 }
+/*
 resource "aws_security_group" "my-new-security-group" {
   name        = "web_server_inbound"
   description = "Allow inbound traffic on tcp/443"
@@ -179,7 +180,8 @@ resource "aws_security_group" "my-new-security-group" {
     Purpose = "Intro to Resource Blocks Lab"
   }
 }
+*/
 resource "random_id" "randomness" {
 byte_length = 2
 }
-*/
+
