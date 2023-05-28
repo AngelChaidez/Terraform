@@ -38,7 +38,7 @@ resource "aws_security_group" "jenkins_security_group" {
   }
 }
 
-
+# Generate a key for the security group and the instance
 resource "tls_private_key" "generated" {
   algorithm = "RSA"
 }
@@ -54,7 +54,7 @@ resource "aws_key_pair" "generated" {
   }
 }
 
-# Configure the AWS EC2 instance
+# Configure the AWS EC2 instance, to use created security group and our keypair we will create and use
 resource "aws_instance" "Jenkins_EC2_Instance" {
   ami                         = "ami-03c7d01cf4dedc891"
   instance_type               = "t2.micro"
@@ -93,6 +93,8 @@ resource "random_id" "randomness" {
   byte_length = 2
 }
 
+# Create a S3 bucket with random suffix for the project name. This project will be private and not accesible
+# to the public
 resource "aws_s3_bucket" "my-new-S3-bucket" {
   bucket = "my-jenkins-cicd-s3-bucket-achaidez-${random_id.randomness.hex}"
 
