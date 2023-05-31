@@ -11,6 +11,7 @@ provider "aws" {
   region = "us-east-1"
 }
 
+
 # Configure the Security Group to allow traffic from on port 22 (SSH) and port 8080.
 resource "aws_security_group" "jenkins_security_group" {
   name        = "jenkins-ec2-${terraform.workspace}"
