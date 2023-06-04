@@ -15,9 +15,9 @@ sudo echo "<!DOCTYPE html>
 <p><em>Thank you for stopping by.</em></p>
 </body>
 </html>" > index.html
-echo "Instance ID" >> index.html
+printf "Instance ID\n" >> index.html
 curl http://169.254.169.254/latest/meta-data/instance-id >> index.html
-echo "Public IP" >> index.html
+printf "Public IP\n" >> index.html
 curl http://169.254.169.254/latest/meta-data/local-ipv4 >> index.html
-echo "Public IP" >> index.html
-curl http://169.254.169.254/latest/meta-data/subnet-id >> index.html
+printf "Availability Zone\n" >> index.html
+curl http://169.254.169.254/latest/meta-data/placement/availability-zone  >> index.html
