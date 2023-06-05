@@ -21,3 +21,4 @@ printf "  Public IP: \n" >> index.html
 curl http://169.254.169.254/latest/meta-data/local-ipv4 >> index.html
 printf "  Availability Zone: \n" >> index.html
 curl http://169.254.169.254/latest/meta-data/placement/availability-zone  >> index.html
+

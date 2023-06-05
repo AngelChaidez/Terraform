@@ -10,7 +10,10 @@ data "aws_vpc" "default" {
 data "aws_availability_zones" "available" {}
 data "aws_region" "current" {}
 
-# Create a security group that allows internet access
+/*
+Create a security group that allows internet access and allows for incoming traffic on ports
+22 for SSH access, ports 80 for internet access via our web browser via HTTP and ports 443 for HTTPS
+*/
 resource "aws_security_group" "autoscaling" {
   name        = "autoscaling_group_${terraform.workspace}"
   description = "Allow incoming traffic access to the security group"
@@ -51,6 +54,10 @@ resource "aws_security_group" "autoscaling" {
   }
   vpc_id = data.aws_vpc.default.id
 }
+/*
+Security group for our LoadBalancer, this will ensure that our EC2 instances receive traffic
+only from our LoadBalancer
+*/
 resource "aws_security_group" "autoscaling_lb" {
   name = "learn-asg-ec2-lb"
   ingress {
@@ -69,7 +76,6 @@ resource "aws_security_group" "autoscaling_lb" {
     cidr_blocks = ["0.0.0.0/0"]
 
   }
-
 
   egress {
     from_port   = 0
@@ -96,7 +102,9 @@ resource "aws_key_pair" "generated" {
     ignore_changes = [key_name]
   }
 }
-
+/*
+Create a launch configuration for our EC2 instances and our autoscaling group
+*/
 resource "aws_launch_configuration" "asg_launch_config" {
   name                        = "asg-launch-config"
   image_id                    = var.instance_ami
@@ -120,7 +128,10 @@ resource "aws_launch_configuration" "asg_launch_config" {
   }
 
 }
-
+/*
+Target groups will route our traffic to our EC2 instances based on the port 80 
+and protocol HTTP 
+*/
 resource "aws_lb_target_group" "asg_target_group" {
   name     = "target-group"
   port     = 80
@@ -128,6 +139,9 @@ resource "aws_lb_target_group" "asg_target_group" {
   vpc_id   = data.aws_vpc.default.id
 
 }
+/*
+Autoscaling attachemnt will attach our LB to our autoscaling group
+*/
 resource "aws_autoscaling_attachment" "asg_attachment" {
   autoscaling_group_name = aws_autoscaling_group.autoscaling_group.id
   lb_target_group_arn    = aws_lb_target_group.asg_target_group.arn
@@ -137,7 +151,10 @@ resource "aws_placement_group" "autoscaling_group" {
   name     = "auto_scaling_group"
   strategy = "cluster"
 }
-
+/*
+Autoscaling group to run on two public subnets using our launch configuration, we will
+keep our running instances at two when traffic is slow and scale up to 5 when traffic is high
+*/
 
 resource "aws_autoscaling_group" "autoscaling_group" {
   name                 = "project_auto_scaling_group"
@@ -152,6 +169,10 @@ resource "aws_autoscaling_group" "autoscaling_group" {
     value               = "launch-instance"
     propagate_at_launch = true
   }
+  lifecycle {
+    create_before_destroy = true
+  }
+
 }
 
 # Load Balancer 
