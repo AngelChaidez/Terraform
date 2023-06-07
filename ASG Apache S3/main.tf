@@ -98,6 +98,8 @@ resource "local_file" "private_key_pem" {
 resource "aws_key_pair" "generated" {
   key_name   = "ASG-Apache-S3"
   public_key = tls_private_key.generated.public_key_openssh
+
+  
   lifecycle {
     ignore_changes = [key_name]
   }
