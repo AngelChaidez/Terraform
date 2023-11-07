@@ -9,10 +9,6 @@ output "rds_master_password" {
   sensitive = true
 }
 
-output "rds_address" {
-  value = "Connection of RDS ${aws_db_instance.cicd-rds-instance.address}"
-}
-
 output "ec2_instance" {
   value = {
     for index, instance in module.ec2_instance :
@@ -21,5 +17,5 @@ output "ec2_instance" {
 }
 
 output "rds_connection" {
-  value = "mysql -h ${aws_db_instance.cicd-rds-instance.endpoint} -P 3306 -u user -p"
+  value = "mysql -h ${aws_db_instance.cicd-rds-instance.address} -P 3306 -u user -p"
 }

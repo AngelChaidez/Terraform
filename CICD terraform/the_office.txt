@@ -1,0 +1,13 @@
+CREATE DATABASE the_office_characters;
+
+USE the_office_characters;
+
+CREATE TABLE cast (
+    PersonID int,
+    LastName varchar(255),
+    FirstName varchar(255),
+    Occupation varchar(255),
+    NiciName varchar(255)
+);
+
+DESCRIBE cast; 

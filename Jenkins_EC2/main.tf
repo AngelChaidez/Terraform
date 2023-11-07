@@ -88,6 +88,7 @@ resource "aws_instance" "Jenkins_EC2_Instance" {
   tags = {
     Name = "Jennkins_CI/CD"
   }
+
 }
 # Add resource to create an S3 bucket with random suffix for the project name
 resource "random_id" "randomness" {

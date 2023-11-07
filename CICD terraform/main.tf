@@ -5,12 +5,12 @@ provider "aws" {
 module "vpc" {
   source = "terraform-aws-modules/vpc/aws"
 
-  name = "my-vpc"
-  cidr = "10.10.0.0/16"
+  name = var.name
+  cidr = var.cidr
 
-  azs             = ["us-east-1a", "us-east-1b"]
-  private_subnets = ["10.10.3.0/24", "10.10.4.0/24"]
-  public_subnets  = ["10.10.1.0/24", "10.10.2.0/24"]
+  azs             = var.azs
+  private_subnets = var.private_subnets
+  public_subnets  = var.public_subnets
 
   enable_nat_gateway   = true
   enable_vpn_gateway   = true
@@ -31,6 +31,8 @@ resource "aws_eip" "nat" {
   count = 2
 }
 
+
+
 resource "aws_security_group" "cicd_security_group" {
   name        = "autoscaling_group_${terraform.workspace}"
   description = "Allow incoming traffic access to the security group"
@@ -40,7 +42,6 @@ resource "aws_security_group" "cicd_security_group" {
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
-    # We want internet to access it
     cidr_blocks = ["0.0.0.0/0"]
   }
   # from port 80
@@ -121,7 +122,7 @@ module "ec2_instance" {
   }
   name                        = "cicd-${each.key}"
   ami                         = var.instance_ami
-  instance_type               = "t2.micro"
+  instance_type               = var.ami_type
   key_name                    = "EastCoastKP"
   monitoring                  = true
   vpc_security_group_ids      = [aws_security_group.cicd_security_group.id, aws_security_group.bastion_security_group.id]
@@ -180,4 +181,3 @@ resource "aws_db_instance" "cicd-rds-instance" {
   parameter_group_name   = "default.mysql5.7"
   skip_final_snapshot    = true
 }
-

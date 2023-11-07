@@ -4,7 +4,7 @@ output "_1-Jenkins-project" {
 }
 output "_2-Public_url" {
   description = "Public URL for our Web Server"
-  value       = "http://${aws_instance.Jenkins_EC2_Instance.public_ip}:8080/index.html"
+  value       = "http://${aws_instance.Jenkins_EC2_Instance.public_ip}:8080/"
 }
 output "_3-SSH_ec2_instance" {
   description = "Public IP for SSH-EC2-Instance login"
